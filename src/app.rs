@@ -135,6 +135,7 @@ impl Tab {
 #[cfg_attr(test, derive(strum::EnumIter))]
 pub enum TabKind {
     #[default]
+    Favorite,
     Playback,
     Recording,
     Output,
@@ -151,6 +152,7 @@ impl TabKind {
 impl std::fmt::Display for TabKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            TabKind::Favorite => write!(f, "Favorite"),
             TabKind::Playback => write!(f, "Playback"),
             TabKind::Recording => write!(f, "Recording"),
             TabKind::Output => write!(f, "Output Devices"),
@@ -225,6 +227,10 @@ impl<'a> App<'a> {
         config: Config,
     ) -> Self {
         let tabs = vec![
+            Tab::new(
+                TabKind::Favorite.to_string(),
+                ObjectList::new(ListKind::Node(view::NodeKind::Favorite), None),
+            ),
             Tab::new(
                 TabKind::Playback.to_string(),
                 ObjectList::new(ListKind::Node(view::NodeKind::Playback), None),

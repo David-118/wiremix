@@ -28,6 +28,7 @@ pub struct View<'a> {
     pub devices: HashMap<ObjectId, Device>,
 
     pub nodes_all: Vec<ObjectId>,
+    pub nodes_favorite: Vec<ObjectId>,
     pub nodes_playback: Vec<ObjectId>,
     pub nodes_recording: Vec<ObjectId>,
     pub nodes_output: Vec<ObjectId>,
@@ -47,6 +48,7 @@ pub struct View<'a> {
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub enum Target {
     Node(ObjectId),
+
     Route(ObjectId, i32, i32),
     Profile(ObjectId, i32),
     Default,
@@ -131,6 +133,7 @@ pub enum VolumeAdjustment {
 
 #[derive(Default, Debug, Clone, Copy)]
 pub enum NodeKind {
+    Favorite,
     Playback,
     Recording,
     Output,
@@ -397,6 +400,7 @@ impl Device {
             object_serial,
             title,
             profiles,
+
             target_title,
             target,
         })
@@ -443,6 +447,7 @@ impl<'a> View<'a> {
             nodes: Default::default(),
             devices: Default::default(),
             nodes_all: Default::default(),
+            nodes_favorite: Default::default(),
             nodes_playback: Default::default(),
             nodes_recording: Default::default(),
             nodes_output: Default::default(),
@@ -552,6 +557,7 @@ impl<'a> View<'a> {
             .collect();
 
         let mut nodes_all = Vec::new();
+        let mut nodes_favorite = Vec::new();
         let mut nodes_playback = Vec::new();
         let mut nodes_recording = Vec::new();
         let mut nodes_output = Vec::new();
@@ -560,6 +566,13 @@ impl<'a> View<'a> {
             nodes.iter().sorted_by_key(|(_, node)| node.object_serial)
         {
             nodes_all.push(*id);
+            if node.title == "Main"
+                || node.title == "VOIP"
+                || node.title == "Actris Pro Wireless"
+                || node.title == "Samson Go Mic"
+            {
+                nodes_favorite.push(*id);
+            }
             if media_class::is_sink_input(&node.media_class) {
                 nodes_playback.push(*id);
             }
@@ -590,6 +603,7 @@ impl<'a> View<'a> {
             nodes,
             devices,
             nodes_all,
+            nodes_favorite,
             nodes_playback,
             nodes_recording,
             nodes_output,
@@ -752,6 +766,7 @@ impl<'a> View<'a> {
 
     pub fn object_ids(&self, node_kind: ListKind) -> &[ObjectId] {
         match node_kind {
+            ListKind::Node(NodeKind::Favorite) => &self.nodes_favorite,
             ListKind::Node(NodeKind::Playback) => &self.nodes_playback,
             ListKind::Node(NodeKind::Recording) => &self.nodes_recording,
             ListKind::Node(NodeKind::Output) => &self.nodes_output,
