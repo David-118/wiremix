@@ -515,6 +515,8 @@ mod tests {
                     "{node:node.description}".parse().unwrap(),
                     "{node:node.nick}".parse().unwrap(),
                 ],
+                favorite: false,
+                favorite_priority: 0,
             }],
             ..Default::default()
         };
@@ -535,6 +537,7 @@ mod tests {
                 value: String::from("Node name"),
                 templates: vec!["{node:node.nick}".parse().unwrap()],
                 favorite: false,
+                favorite_priority: 0,
             }],
             ..Default::default()
         };
@@ -554,6 +557,8 @@ mod tests {
                 property: Tag::Node(String::from("node.description")),
                 value: String::from("Node name"),
                 templates: vec!["{node:node.nick}".parse().unwrap()],
+                favorite: false,
+                favorite_priority: 0,
             }],
             ..Default::default()
         };
@@ -573,6 +578,8 @@ mod tests {
                 property: Tag::Node(String::from("node.name")),
                 value: String::from("Node name"),
                 templates: vec![],
+                favorite: false,
+                favorite_priority: 0,
             }],
             ..Default::default()
         };

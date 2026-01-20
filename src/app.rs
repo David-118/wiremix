@@ -1025,6 +1025,7 @@ mod tests {
                 TabKind::Output => assert_eq!(title, "Output Devices"),
                 TabKind::Input => assert_eq!(title, "Input Devices"),
                 TabKind::Configuration => assert_eq!(title, "Configuration"),
+                TabKind::Favorite => assert_eq!(title, "Favorite"),
             }
         }
     }
