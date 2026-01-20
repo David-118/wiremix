@@ -56,7 +56,7 @@ impl Names {
         &self,
         state: &state::State,
         resolver: &T,
-    ) -> bool {
+    ) -> (bool, i8) {
         resolver.favorite(state, self)
     }
 }
@@ -108,22 +108,29 @@ pub trait NameResolver: TagResolver {
         state: &state::State,
         overrides: &'a [config::NameOverride],
         override_type: config::OverrideType,
-    ) -> Option<bool> {
+    ) -> Option<(bool, i8)> {
         overrides.iter().find_map(|name_override| {
             (name_override.types.contains(&override_type)
                 && self.resolve_tag(state, &name_override.property)
                     == Some(&name_override.value))
-            .then_some(name_override.favorite)
+            .then_some((
+                name_override.favorite,
+                name_override.favorite_priority,
+            ))
         })
     }
 
-    fn favorite(&self, state: &state::State, names: &config::Names) -> bool {
+    fn favorite(
+        &self,
+        state: &state::State,
+        names: &config::Names,
+    ) -> (bool, i8) {
         self.favourites_override(
             state,
             &names.overrides,
             config::OverrideType::Device,
         )
-        .unwrap_or(false)
+        .unwrap_or((false, 0))
     }
 }
 

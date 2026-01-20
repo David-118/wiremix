@@ -113,6 +113,7 @@ pub struct Node {
     pub client_id: Option<ObjectId>,
 
     pub favorite: bool,
+    pub favorite_priority: i8,
 }
 
 #[derive(Debug)]
@@ -230,7 +231,7 @@ impl Node {
 
         let media_class = node.props.media_class()?.clone();
         let title = names.resolve(state, node)?;
-        let favorite = names.favorite(state, node);
+        let (favorite, favorite_priority) = names.favorite(state, node);
 
         // Nodes can represent either streams or devices.
         let (volumes, mute, device_info) =
@@ -341,6 +342,7 @@ impl Node {
             title,
             title_source_sink: node.props.media_name().cloned(),
             favorite,
+            favorite_priority,
             media_class,
             routes,
             target,
@@ -561,7 +563,7 @@ impl<'a> View<'a> {
             .collect();
 
         let mut nodes_all = Vec::new();
-        let mut nodes_favorite = Vec::new();
+        let mut nodes_favorite_unsorted = Vec::new();
         let mut nodes_playback = Vec::new();
         let mut nodes_recording = Vec::new();
         let mut nodes_output = Vec::new();
@@ -571,7 +573,7 @@ impl<'a> View<'a> {
         {
             nodes_all.push(*id);
             if node.favorite {
-                nodes_favorite.push(*id);
+                nodes_favorite_unsorted.push((node.favorite_priority, *id));
             }
             if media_class::is_sink_input(&node.media_class) {
                 nodes_playback.push(*id);
@@ -586,6 +588,13 @@ impl<'a> View<'a> {
                 nodes_input.push(*id);
             }
         }
+
+        let nodes_favorite = nodes_favorite_unsorted
+            .iter()
+            .sorted_by_key(|(priority, _)| -priority)
+            .map(|(_, id)| *id)
+            .collect_vec();
+
         let nodes_all = nodes_all;
         let nodes_playback = nodes_playback;
         let nodes_recording = nodes_recording;
