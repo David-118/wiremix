@@ -22,6 +22,7 @@ pub struct ThemeOverlay {
     volume: Option<StyleDef>,
     volume_empty: Option<StyleDef>,
     volume_filled: Option<StyleDef>,
+    volume_muted: Option<StyleDef>,
     meter_inactive: Option<StyleDef>,
     meter_active: Option<StyleDef>,
     meter_overload: Option<StyleDef>,
@@ -101,6 +102,7 @@ impl TryFrom<ThemeOverlay> for Theme {
         set!(volume);
         set!(volume_empty);
         set!(volume_filled);
+        set!(volume_muted);
         set!(meter_inactive);
         set!(meter_active);
         set!(meter_overload);
@@ -134,8 +136,9 @@ impl Default for Theme {
             node_title: Style::default(),
             node_target: Style::default(),
             volume: Style::default(),
-            volume_empty: Style::default().bg(Color::DarkGray),
-            volume_filled: Style::default().bg(Color::LightBlue),
+            volume_empty: Style::default().fg(Color::DarkGray),
+            volume_filled: Style::default().fg(Color::LightBlue),
+            volume_muted: Style::default().fg(Color::LightRed),
             meter_inactive: Style::default().fg(Color::DarkGray),
             meter_active: Style::default().fg(Color::LightGreen),
             meter_overload: Style::default().fg(Color::Red),
@@ -180,6 +183,7 @@ impl Theme {
             volume: Style::default(),
             volume_empty: Style::default().add_modifier(Modifier::DIM),
             volume_filled: Style::default().add_modifier(Modifier::BOLD),
+            volume_muted: Style::default().add_modifier(Modifier::DIM),
             meter_inactive: Style::default().add_modifier(Modifier::DIM),
             meter_active: Style::default().add_modifier(Modifier::BOLD),
             meter_overload: Style::default().add_modifier(Modifier::BOLD),
@@ -213,6 +217,7 @@ impl Theme {
             volume: Style::default(),
             volume_empty: Style::default(),
             volume_filled: Style::default(),
+            volume_muted: Style::default(),
             meter_inactive: Style::default(),
             meter_active: Style::default(),
             meter_overload: Style::default(),

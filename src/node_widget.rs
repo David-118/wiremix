@@ -427,7 +427,7 @@ impl StatefulWidget for VolumeWidget<'_> {
                 Span::styled(
                     filled,
                     if self.node.mute {
-                        self.config.theme.volume_empty
+                        self.config.theme.volume_muted
                     } else {
                         self.config.theme.volume_filled
                     },

@@ -178,6 +178,7 @@ pub struct Theme {
     pub volume: Style,
     pub volume_empty: Style,
     pub volume_filled: Style,
+    pub volume_muted: Style,
     pub meter_inactive: Style,
     pub meter_active: Style,
     pub meter_overload: Style,
