@@ -424,7 +424,14 @@ impl StatefulWidget for VolumeWidget<'_> {
                 .volume_empty
                 .repeat((volume_bar.width as usize).saturating_sub(count));
             Line::from(vec![
-                Span::styled(filled, self.config.theme.volume_filled),
+                Span::styled(
+                    filled,
+                    if self.node.mute {
+                        self.config.theme.volume_empty
+                    } else {
+                        self.config.theme.volume_filled
+                    },
+                ),
                 Span::styled(blank, self.config.theme.volume_empty),
             ])
             .render(volume_bar, buf);
