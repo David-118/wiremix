@@ -588,4 +588,81 @@ mod tests {
         let result = names.resolve(&fixture.state, node);
         assert_eq!(result, Some(String::from("Node name")))
     }
+
+    #[test]
+    fn test_favourite_no_overide() {
+        let fixture = Fixture::new();
+
+        let names = Names {
+            ..Default::default()
+        };
+
+        let node = fixture.state.nodes.get(&fixture.node_id).unwrap();
+        let result = names.favorite(&fixture.state, node);
+
+        assert_eq!(result, (false, 0))
+    }
+
+    #[test]
+    fn test_favourite_overide_not_fav() {
+        let fixture = Fixture::new();
+
+        let names = Names {
+            overrides: vec![NameOverride {
+                types: vec![OverrideType::Device, OverrideType::Stream],
+                property: Tag::Node(String::from("node.name")),
+                value: String::from("Node name"),
+                templates: vec![],
+                favorite: false,
+                favorite_priority: 0,
+            }],
+            ..Default::default()
+        };
+
+        let node = fixture.state.nodes.get(&fixture.node_id).unwrap();
+        let result = names.favorite(&fixture.state, node);
+        assert_eq!(result, (false, 0))
+    }
+
+    #[test]
+    fn test_favourite_overide_others() {
+        let fixture = Fixture::new();
+
+        let names = Names {
+            overrides: vec![NameOverride {
+                types: vec![OverrideType::Device, OverrideType::Stream],
+                property: Tag::Node(String::from("node.name")),
+                value: String::from("Not Node name"),
+                templates: vec![],
+                favorite: true,
+                favorite_priority: 100,
+            }],
+            ..Default::default()
+        };
+
+        let node = fixture.state.nodes.get(&fixture.node_id).unwrap();
+        let result = names.favorite(&fixture.state, node);
+        assert_eq!(result, (false, 0))
+    }
+
+    #[test]
+    fn test_favourited_node() {
+        let fixture = Fixture::new();
+
+        let names = Names {
+            overrides: vec![NameOverride {
+                types: vec![OverrideType::Device, OverrideType::Stream],
+                property: Tag::Node(String::from("node.name")),
+                value: String::from("Node name"),
+                templates: vec![],
+                favorite: true,
+                favorite_priority: 100,
+            }],
+            ..Default::default()
+        };
+
+        let node = fixture.state.nodes.get(&fixture.node_id).unwrap();
+        let result = names.favorite(&fixture.state, node);
+        assert_eq!(result, (true, 100))
+    }
 }
