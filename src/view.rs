@@ -568,10 +568,11 @@ impl<'a> View<'a> {
             nodes_all.push(*id);
             if node.title == "Main"
                 || node.title == "VOIP"
-                || node.title == "Actris Pro Wireless"
                 || node.title == "Samson Go Mic"
             {
                 nodes_favorite.push(*id);
+            } else if node.title == "Arctis Pro Wireless" {
+                nodes_favorite.insert(0, *id);
             }
             if media_class::is_sink_input(&node.media_class) {
                 nodes_playback.push(*id);
