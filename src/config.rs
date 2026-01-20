@@ -130,6 +130,7 @@ pub struct NameOverride {
     pub property: names::Tag,
     pub value: String,
     pub templates: Vec<names::NameTemplate>,
+    pub favorite: bool,
 }
 
 #[derive(Debug)]

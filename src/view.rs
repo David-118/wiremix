@@ -111,6 +111,8 @@ pub struct Node {
     pub is_default_source: bool,
 
     pub client_id: Option<ObjectId>,
+
+    pub favorite: bool,
 }
 
 #[derive(Debug)]
@@ -228,6 +230,7 @@ impl Node {
 
         let media_class = node.props.media_class()?.clone();
         let title = names.resolve(state, node)?;
+        let favorite = names.favorite(state, node);
 
         // Nodes can represent either streams or devices.
         let (volumes, mute, device_info) =
@@ -337,6 +340,7 @@ impl Node {
             name: node.props.node_name()?.clone(),
             title,
             title_source_sink: node.props.media_name().cloned(),
+            favorite,
             media_class,
             routes,
             target,
@@ -566,13 +570,8 @@ impl<'a> View<'a> {
             nodes.iter().sorted_by_key(|(_, node)| node.object_serial)
         {
             nodes_all.push(*id);
-            if node.title == "Main"
-                || node.title == "VOIP"
-                || node.title == "Samson Go Mic"
-            {
+            if node.favorite {
                 nodes_favorite.push(*id);
-            } else if node.title == "Arctis Pro Wireless" {
-                nodes_favorite.insert(0, *id);
             }
             if media_class::is_sink_input(&node.media_class) {
                 nodes_playback.push(*id);

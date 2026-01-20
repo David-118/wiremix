@@ -51,6 +51,14 @@ impl Names {
             })
             .or(resolver.fallback().cloned())
     }
+
+    pub fn favorite<T: TagResolver + NameResolver>(
+        &self,
+        state: &state::State,
+        resolver: &T,
+    ) -> bool {
+        resolver.favorite(state, self)
+    }
 }
 
 impl Default for Names {
@@ -93,6 +101,29 @@ pub trait NameResolver: TagResolver {
                     == Some(&name_override.value))
             .then_some(&name_override.templates)
         })
+    }
+
+    fn favourites_override<'a>(
+        &self,
+        state: &state::State,
+        overrides: &'a [config::NameOverride],
+        override_type: config::OverrideType,
+    ) -> Option<bool> {
+        overrides.iter().find_map(|name_override| {
+            (name_override.types.contains(&override_type)
+                && self.resolve_tag(state, &name_override.property)
+                    == Some(&name_override.value))
+            .then_some(name_override.favorite)
+        })
+    }
+
+    fn favorite(&self, state: &state::State, names: &config::Names) -> bool {
+        self.favourites_override(
+            state,
+            &names.overrides,
+            config::OverrideType::Device,
+        )
+        .unwrap_or(false)
     }
 }
 
@@ -496,6 +527,7 @@ mod tests {
                 property: Tag::Node(String::from("node.name")),
                 value: String::from("Node name"),
                 templates: vec!["{node:node.nick}".parse().unwrap()],
+                favorite: false,
             }],
             ..Default::default()
         };
