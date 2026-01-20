@@ -1,3 +1,18 @@
+# why I made this
+This project is a fork of `https://github.com/tsowell/wiremix` used for a project of mine.
+wiremix was chosen because, inspite of my limited experiance with rust, the code is very modular and easy to follow
+
+I decided to upload this here because I think it is cool.
+
+Massive thanks to tsowell and other people who have contribued upstream for making this possible
+
+I have made some small modifcations to help make it better for a small screen:
+* larger bars on deafult charset
+* red (by default) bars to clearly show a device is muted at a quick glance
+* Added a favorite tab to show important Devices/Nodes at a glance.
+
+
+
 # wiremix
 
 wiremix is a simple TUI audio mixer for PipeWire. You can use it to adjust
@@ -14,27 +29,28 @@ Issues and pull requests are welcome!
 
 ## Installation
 
-### Package Managers
-
-* Arch Linux: Install the [official package](https://archlinux.org/packages/extra/x86_64/wiremix/)
-  via `pacman -S wiremix` or `paru -S wiremix-git` for the
-  latest development version from the [AUR](https://aur.archlinux.org/packages/wiremix-git).
-* Nix: `nix run nixpkgs#wiremix` or add `wiremix` to your configuration.
-* Gentoo: Install the [official package](https://packages.gentoo.org/packages/media-sound/wiremix) via
-  `emerge -av wiremix`.
-* Fedora: Install the [official package](https://src.fedoraproject.org/rpms/rust-wiremix) via
-  `dnf in wiremix`.
-
 ### Manual Installation
 
 wiremix depends on Rust and the PipeWire libraries. To install all
 dependencies:
 
 * Ubuntu: `sudo apt install cargo libpipewire-0.3-dev pkg-config clang`
-* Debian: `sudo apt install libpipewire-0.3-dev pkg-config clang` (you will
-  also need to install a somewhat recent Rust toolchain - rustup is one way)
+* Debian: `sudo apt install libpipewire-0.3-dev pkg-config clang` 
+* OpenSUSE: `sudo zypper install pipewire-devel pkgconf clang
+(you will also need to install a somewhat recent Rust toolchain - rustup is one way)
 
-Then install wiremix with `cargo install wiremix`
+Clone this repo
+
+`git clone [enter url when I have one]`
+
+build project
+```sh
+cd wiremix
+cargo build -r
+```
+
+This will create an executable `target/release/wiremix` that you can do what what you want with
+
 
 ## Quick Start
 
@@ -227,7 +243,8 @@ There are three built-in themes:
 
 1. `default` is the default theme.
 2. `nocolor` uses no color, only attributes.
-3. `plain` uses only the default style - no colors or attributes.
+3. `plain` uses only the default style - no colors or attributes. 
+   Please note the default character set dose not work with theme `plain` as the same character (█) are used for volume_empty and volume_fill.
 
 The configuration file allows for both modifying built-in themes and creating
 custom ones.
@@ -244,6 +261,8 @@ software and devices, so you can also specify alternate name templates to use
 for PipeWire nodes matching configurable criteria.
 
 See [wiremix.toml](./wiremix.toml) for more details.
+
+As I am lazy name overides system has been hijacked for the Favorites system.
 
 #### Examples
 
@@ -275,27 +294,36 @@ I use these overrides with the default names:
 # This device's device.name is truncated to "USB-C to 3.5mm Headphone Jack
 # A". This override makes wiremix use device.description instead, which for
 # this device is "USB-C to 3.5mm Headphone Jack Adapter".
+# The device will appear on the favorite tab above all lower prioriry devices.
 [[names.overrides]]
 types = [ "endpoint", "device" ]
 property = "device:device.name"
 value = "alsa_card.usb-Apple__Inc._USB-C_to_3.5mm_Headphone_Jack_Adapter_DWH841302FEJKLTA3-00"
 templates = [ "{device:device.description}" ]
+favorite = true
+favorite_priority = 10
 
 # The Spotify client's node.name is "spotify", and it also uses "Spotify" for
 # media.name. This override makes wiremix use just the node.name, so it shows
 # as "spotify" instead of "spotify: Spotify".
+# The device will not appear in the favorite list. Prioriry must be set but will be ignored.
 [[names.overrides]]
 types = [ "stream" ]
 property = "node:node.name"
 value = "spotify"
 templates = [ "{node:node.name}" ]
+favorite = false
+favorite_priority = 0
 
 # mpv is also a bit redundant with the default naming scheme - it suffixes
 # media.name with "- mpv". This override makes it show as "foo - mpv" instead
 # of "mpv: foo - mpv".
+# mpv will appear on the favorites screen under the dongle (when open).
 [[names.overrides]]
 types = [ "stream" ]
 property = "node:node.name"
 value = "mpv"
 templates = [ "{node:media.name}" ]
+favorite = false
+favorite_priority = 0
 ```
