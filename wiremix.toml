@@ -324,6 +324,7 @@ node_target = {  }
 volume = {  }
 volume_empty = {  }
 volume_filled = {  }
+volume_muted = {  }
 meter_inactive = {  }
 meter_active = {  }
 meter_overload = {  }
