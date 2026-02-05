@@ -90,8 +90,8 @@ impl<'a> NodeWidget<'a> {
         let height = std::cmp::min(max_visible_items, object_list.targets.len())
             .saturating_add(2) as u16; // Plus 2 for horizontal borders
 
-        // Align to the right of the list area
-        let x = list_area.right().saturating_sub(width);
+        // Align to the right of the list area - touch control space
+        let x = list_area.right().saturating_sub(width).saturating_sub(30);
         // Subtract 1 for the top border
         let y = object_area.top().saturating_sub(1);
 
@@ -142,12 +142,14 @@ impl StatefulWidget for NodeWidget<'_> {
         let layout = Layout::default()
             .direction(Direction::Horizontal)
             .constraints([
-                Constraint::Length(1), // selector_area
-                Constraint::Min(0),    // node_area
+                Constraint::Length(1),  // selector_area
+                Constraint::Min(0),     // node_area
+                Constraint::Length(30), // controls_area
             ])
             .split(area);
         let selector_area = layout[0];
         let node_area = layout[1];
+        let controls_area = layout[2];
 
         SelectorWidget::new(self.config, self.selected)
             .render(selector_area, buf);
@@ -206,6 +208,103 @@ impl StatefulWidget for NodeWidget<'_> {
             volume.render(volume_area, buf, mouse_areas);
             MeterWidget::new(self.config, self.node).render(meter_area, buf);
         }
+
+        // TODO: config option for touch controls
+        let btns = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([
+                Constraint::Length(0), // _padding
+                Constraint::Length(7), // mute_btn
+                Constraint::Length(7), // vol_down_btn
+                Constraint::Length(7), // vol_up_btn
+            ])
+            .spacing(3)
+            .split(controls_area);
+
+        let mute_btn = btns[1];
+        let vol_down_btn = btns[2];
+        let vol_up_btn = btns[3];
+
+        BtnWidget::new(self.config, self.node, Action::ToggleMute).render(
+            mute_btn,
+            buf,
+            mouse_areas,
+        );
+        BtnWidget::new(
+            self.config,
+            self.node,
+            Action::SetRelativeVolume(-0.1f32),
+        )
+        .render(vol_down_btn, buf, mouse_areas);
+        BtnWidget::new(
+            self.config,
+            self.node,
+            Action::SetRelativeVolume(0.1f32),
+        )
+        .render(vol_up_btn, buf, mouse_areas);
+    }
+}
+
+struct BtnWidget<'a> {
+    config: &'a Config,
+    node: &'a view::Node,
+    action: Action,
+}
+
+impl<'a> BtnWidget<'a> {
+    fn new(config: &'a Config, node: &'a view::Node, action: Action) -> Self {
+        Self {
+            config,
+            node,
+            action,
+        }
+    }
+}
+
+impl StatefulWidget for BtnWidget<'_> {
+    type State = Vec<MouseArea>;
+    fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
+        let mouse_areas = state;
+
+        mouse_areas.push((
+            area,
+            smallvec![MouseEventKind::Down(MouseButton::Left)],
+            smallvec![Action::SelectObject(self.node.object_id), self.action],
+        ));
+
+        let rows = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([
+                Constraint::Length(1),
+                Constraint::Length(1),
+                Constraint::Length(1),
+            ])
+            .split(area);
+
+        let style = if self.action == Action::ToggleMute && self.node.mute {
+            self.config.theme.volume_muted
+        } else {
+            self.config.theme.volume_empty
+        };
+
+        Line::from(Span::styled(
+            self.config.char_set.volume_empty.repeat(7),
+            style,
+        ))
+        .render(rows[0], buf);
+
+        Line::from(Span::styled(
+            self.config.char_set.volume_empty.repeat(7),
+            style,
+        ))
+        .alignment(Alignment::Center)
+        .render(rows[1], buf);
+
+        Line::from(Span::styled(
+            self.config.char_set.volume_empty.repeat(7),
+            style,
+        ))
+        .render(rows[2], buf);
     }
 }
 
