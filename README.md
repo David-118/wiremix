@@ -10,6 +10,7 @@ I have made some small modifcations to help make it better for a small screen:
 * larger bars on deafult charset
 * red (by default) bars to clearly show a device is muted at a quick glance
 * Added a favorite tab to show important Devices/Nodes at a glance.
+* Added large touch freindly buttons for mute, increase and reducing volume
 
 
 
@@ -23,9 +24,7 @@ wiremix's interface is more or less a clone of the wonderful
 [ncpamixer](https://github.com/fulhax/ncpamixer) which was itself inspired by
 pavucontrol, so users of either should find it familiar.
 
-Issues and pull requests are welcome!
-
-<img src="https://github.com/user-attachments/assets/26823e34-3a6f-4a3a-bdb2-cde7f3d4cbe5" width="612">
+<img src="https://raw.githubusercontent.com/David-118/wiremix/refs/heads/main/images/wiremix.GIF" width="612">
 
 ## Installation
 
@@ -41,7 +40,7 @@ dependencies:
 
 Clone this repo
 
-`git clone [enter url when I have one]`
+`git clone https://github.com/David-118/wiremix.git`
 
 build project
 ```sh
