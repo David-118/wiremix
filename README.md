@@ -35,7 +35,7 @@ dependencies:
 
 * Ubuntu: `sudo apt install cargo libpipewire-0.3-dev pkg-config clang`
 * Debian: `sudo apt install libpipewire-0.3-dev pkg-config clang` 
-* OpenSUSE: `sudo zypper install pipewire-devel pkgconf clang
+* OpenSUSE: `sudo zypper install pipewire-devel pkgconf clang`
 (you will also need to install a somewhat recent Rust toolchain - rustup is one way)
 
 Clone this repo
