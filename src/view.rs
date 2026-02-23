@@ -48,7 +48,6 @@ pub struct View<'a> {
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub enum Target {
     Node(ObjectId),
-
     Route(ObjectId, i32, i32),
     Profile(ObjectId, i32),
     Default,
@@ -87,7 +86,6 @@ pub struct Node {
     pub object_serial: u64,
     pub name: String,
     pub title: String,
-    pub title_source_sink: Option<String>,
     pub media_class: String,
 
     pub routes: Option<Vec<(Target, String)>>,
@@ -340,7 +338,6 @@ impl Node {
             object_serial: *node.props.object_serial()?,
             name: node.props.node_name()?.clone(),
             title,
-            title_source_sink: node.props.media_name().cloned(),
             favorite,
             favorite_priority,
             media_class,
@@ -406,7 +403,6 @@ impl Device {
             object_serial,
             title,
             profiles,
-
             target_title,
             target,
         })

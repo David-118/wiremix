@@ -27,16 +27,6 @@ fn is_default(node: &view::Node, device_kind: Option<DeviceKind>) -> bool {
     }
 }
 
-fn node_title(node: &view::Node, device_kind: Option<DeviceKind>) -> &str {
-    match (device_kind, &node.title_source_sink) {
-        (
-            Some(DeviceKind::Source | DeviceKind::Sink),
-            Some(title_source_sink),
-        ) => title_source_sink,
-        _ => &node.title,
-    }
-}
-
 pub fn touch_controls_size(touch_controls: bool) -> u16 {
     if touch_controls {
         30
@@ -402,7 +392,6 @@ impl<'a> HeaderWidget<'a> {
     }
 
     fn title_line(&self) -> Line<'_> {
-        let node_title = node_title(self.node, self.device_kind);
         let default_span = if is_default(self.node, self.device_kind) {
             Span::styled(
                 &self.config.char_set.default_device,
@@ -414,7 +403,7 @@ impl<'a> HeaderWidget<'a> {
         Line::from(vec![
             default_span,
             Span::from(" "),
-            Span::styled(node_title, self.config.theme.node_title),
+            Span::styled(&self.node.title, self.config.theme.node_title),
         ])
     }
 }
