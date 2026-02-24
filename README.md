@@ -296,8 +296,7 @@ I use these overrides with the default names:
 # The device will appear on the favorite tab above all lower prioriry devices.
 [[names.overrides]]
 types = [ "endpoint", "device" ]
-property = "device:device.name"
-value = "alsa_card.usb-Apple__Inc._USB-C_to_3.5mm_Headphone_Jack_Adapter_DWH841302FEJKLTA3-00"
+matches = [ { "device:device.name" = "alsa_card.usb-Apple__Inc._USB-C_to_3.5mm_Headphone_Jack_Adapter_DWH841302FEJKLTA3-00" } ]
 templates = [ "{device:device.description}" ]
 favorite = true
 favorite_priority = 10
@@ -308,8 +307,7 @@ favorite_priority = 10
 # The device will not appear in the favorite list. Prioriry must be set but will be ignored.
 [[names.overrides]]
 types = [ "stream" ]
-property = "node:node.name"
-value = "spotify"
+matches = [ { "node.name" = "spotify" } ]
 templates = [ "{node:node.name}" ]
 favorite = false
 favorite_priority = 0
@@ -320,8 +318,7 @@ favorite_priority = 0
 # mpv will appear on the favorites screen under the dongle (when open).
 [[names.overrides]]
 types = [ "stream" ]
-property = "node:node.name"
-value = "mpv"
+matches = [ { "node.name" = "mpv" } ]
 templates = [ "{node:media.name}" ]
 favorite = false
 favorite_priority = 0
