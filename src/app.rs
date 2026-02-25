@@ -318,8 +318,12 @@ impl<'a> App<'a> {
         while !self.exit {
             // Update view if needed
             if self.state_dirty {
-                self.view =
-                    View::from(self.wirehose, &self.state, &self.config.names);
+                self.view = View::from(
+                    self.wirehose,
+                    &self.state,
+                    &self.config.names,
+                    &self.config.filters,
+                );
             }
             self.state_dirty = false;
 
@@ -389,6 +393,15 @@ impl<'a> App<'a> {
         let Some(node) = self.state.nodes.get(&object_id) else {
             return;
         };
+
+        if self
+            .config
+            .filters
+            .iter()
+            .any(|condition| condition.matches(&self.state, node))
+        {
+            return;
+        }
 
         let Some(object_serial) = node.props.object_serial() else {
             return;
@@ -924,6 +937,8 @@ mod tests {
             tab: Default::default(),
             lazy_capture: Default::default(),
             touch_controls: Default::default(),
+            filters: Default::default(),
+            favorite_filters: Default::default(),
         };
 
         let mut app = App::new(wirehose, event_rx, config);
@@ -960,7 +975,8 @@ mod tests {
         for event in events {
             event.handle(&mut app).unwrap();
         }
-        app.view = View::from(wirehose, &app.state, &app.config.names);
+        app.view =
+            View::from(wirehose, &app.state, &app.config.names, &Vec::new());
 
         // Select the node
         Action::SelectObject(object_id).handle(&mut app).unwrap();
@@ -1017,6 +1033,8 @@ mod tests {
             tab: Default::default(),
             lazy_capture: Default::default(),
             touch_controls: Default::default(),
+            filters: Default::default(),
+            favorite_filters: Default::default(),
         };
         let mut app = App::new(&wirehose, event_rx, config);
 

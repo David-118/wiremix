@@ -124,6 +124,7 @@ keybindings = [
  # 2. { SelectTab = N }: Open the Nth tab
 ]
 
+favorite_filters = []
 
 # Names
 #
@@ -229,6 +230,33 @@ device = [ "{device:device.nick}", "{device:device.description}" ]
 # ]
 
 
+# Filters
+#
+# Filters hide objects from lists.
+#
+# Filters consist of a list of match rules (see Match Rules section) and an
+# optional string id. The id is only used for overriding built-in filters.
+#
+# [[filters]]
+# # Hide virtual endpoints
+# matches = [ { "node.virtual" = "true", "media.class" = "Audio/Sink" } ]
+#
+# [[filters]]
+# # Disable a built-in filter
+# id = "pavucontrol-capture"
+# matches = [ ]
+[[filters]]
+matches = [ { "node.name" = "wiremix-capture" } ]
+
+[[filters]]
+id = "pavucontrol-capture"
+matches = [ { "node.name" = "PulseAudio Volume Control" } ]
+
+[[filters]]
+id = "ncpamixer-capture"
+matches = [ { "node.name" = "ncpamixer" } ]
+
+
 # Themes
 #
 # Themes determine the styling of user interface elements.
@@ -294,14 +322,15 @@ node_target = { }
 # The volume percentage label
 volume = { }
 # Volume bar
-volume_empty = { fg = "DarkGray" }
+volume_empty = { fg = "Gray" }
 volume_filled = { fg = "LightBlue" }
+volume_muted = { fg = "LightRed" }
 # Peak meter. Inactive = unlit, active = lit, overload = greater than 0.0 dB
-meter_inactive = { fg = "DarkGray" }
+meter_inactive = { fg = "Gray" }
 meter_active = { fg = "LightGreen" }
 meter_overload = { fg = "Red" }
 # The "live" indicator in the center of the meter
-meter_center_inactive = { fg = "DarkGray" }
+meter_center_inactive = { fg = "Gray" }
 meter_center_active = { fg = "LightGreen" }
 # The name of a device in the Configuration tab
 config_device = { }
@@ -317,14 +346,14 @@ dropdown_item = { }
 dropdown_selected = { fg = "LightCyan", add_modifier = "REVERSED" }
 # The symbol at the top/bottom of a dropdown indicating that there are more
 # items
-dropdown_more = { fg = "DarkGray" }
+dropdown_more = { fg = "Gray" }
 # Border around help menu
 help_border = { }
 # The name of an item in a the help menu
 help_item = { }
 # The symbol at the top/bottom of the help menu indicating that there are more
 # items
-help_more = { fg = "DarkGray" }
+help_more = { fg = "Gray" }
 
 
 # Character Sets
@@ -415,6 +444,7 @@ node_target = { }
 volume = { }
 volume_empty = { add_modifier = "DIM" }
 volume_filled = { add_modifier = "BOLD" }
+volume_muted = { add_modifier = "DIM" }
 meter_inactive = { add_modifier = "DIM" }
 meter_active = { add_modifier = "BOLD" }
 meter_overload = { add_modifier = "BOLD" }
@@ -444,6 +474,7 @@ node_target = { }
 volume = { }
 volume_empty = { }
 volume_filled = { }
+volume_muted = { }
 meter_inactive = { }
 meter_active = { }
 meter_overload = { }

@@ -4,10 +4,9 @@
 //! be parsable into PropertyKeys in order for the string to be accepted.
 //! { without a matching } or } without a matching { are invalid.
 //! { and } can be escaped with {{ and }}.
+use crate::config::property_key::PropertyKey;
 use anyhow::{anyhow, bail};
 use serde_with::DeserializeFromStr;
-
-use crate::config::property_key::PropertyKey;
 
 #[derive(Debug, DeserializeFromStr)]
 #[cfg_attr(test, derive(PartialEq))]
