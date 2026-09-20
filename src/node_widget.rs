@@ -37,6 +37,14 @@ fn node_title(node: &view::Node, device_kind: Option<DeviceKind>) -> &str {
     }
 }
 
+pub fn touch_controls_size(touch_controls: bool) -> u16 {
+    if touch_controls {
+        30
+    } else {
+        0
+    }
+}
+
 pub struct NodeWidget<'a> {
     config: &'a Config,
     device_kind: Option<DeviceKind>,
@@ -74,6 +82,7 @@ impl<'a> NodeWidget<'a> {
         object_list: &ObjectList,
         list_area: &Rect,
         object_area: &Rect,
+        right_padding: u16,
     ) -> Rect {
         // Number of items to show at once
         let max_visible_items = 5;
@@ -91,7 +100,10 @@ impl<'a> NodeWidget<'a> {
             .saturating_add(2) as u16; // Plus 2 for horizontal borders
 
         // Align to the right of the list area - touch control space
-        let x = list_area.right().saturating_sub(width).saturating_sub(30);
+        let x = list_area
+            .right()
+            .saturating_sub(width)
+            .saturating_sub(right_padding);
         // Subtract 1 for the top border
         let y = object_area.top().saturating_sub(1);
 
@@ -142,9 +154,11 @@ impl StatefulWidget for NodeWidget<'_> {
         let layout = Layout::default()
             .direction(Direction::Horizontal)
             .constraints([
-                Constraint::Length(1),  // selector_area
-                Constraint::Min(0),     // node_area
-                Constraint::Length(30), // controls_area
+                Constraint::Length(1), // selector_area
+                Constraint::Min(0),    // node_area
+                Constraint::Length(touch_controls_size(
+                    self.config.touch_controls,
+                )), // controls_area
             ])
             .split(area);
         let selector_area = layout[0];
@@ -208,40 +222,40 @@ impl StatefulWidget for NodeWidget<'_> {
             volume.render(volume_area, buf, mouse_areas);
             MeterWidget::new(self.config, self.node).render(meter_area, buf);
         }
+        if self.config.touch_controls {
+            let btns = Layout::default()
+                .direction(Direction::Horizontal)
+                .constraints([
+                    Constraint::Length(0), // _padding
+                    Constraint::Length(7), // mute_btn
+                    Constraint::Length(7), // vol_down_btn
+                    Constraint::Length(7), // vol_up_btn
+                ])
+                .spacing(3)
+                .split(controls_area);
 
-        // TODO: config option for touch controls
-        let btns = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints([
-                Constraint::Length(0), // _padding
-                Constraint::Length(7), // mute_btn
-                Constraint::Length(7), // vol_down_btn
-                Constraint::Length(7), // vol_up_btn
-            ])
-            .spacing(3)
-            .split(controls_area);
+            let mute_btn = btns[1];
+            let vol_down_btn = btns[2];
+            let vol_up_btn = btns[3];
 
-        let mute_btn = btns[1];
-        let vol_down_btn = btns[2];
-        let vol_up_btn = btns[3];
-
-        BtnWidget::new(self.config, self.node, Action::ToggleMute).render(
-            mute_btn,
-            buf,
-            mouse_areas,
-        );
-        BtnWidget::new(
-            self.config,
-            self.node,
-            Action::SetRelativeVolume(-0.1f32),
-        )
-        .render(vol_down_btn, buf, mouse_areas);
-        BtnWidget::new(
-            self.config,
-            self.node,
-            Action::SetRelativeVolume(0.1f32),
-        )
-        .render(vol_up_btn, buf, mouse_areas);
+            BtnWidget::new(self.config, self.node, Action::ToggleMute).render(
+                mute_btn,
+                buf,
+                mouse_areas,
+            );
+            BtnWidget::new(
+                self.config,
+                self.node,
+                Action::SetRelativeVolume(-0.1f32),
+            )
+            .render(vol_down_btn, buf, mouse_areas);
+            BtnWidget::new(
+                self.config,
+                self.node,
+                Action::SetRelativeVolume(0.1f32),
+            )
+            .render(vol_up_btn, buf, mouse_areas);
+        }
     }
 }
 

@@ -39,6 +39,7 @@ pub struct Config {
     pub names: Names,
     pub tab: TabKind,
     pub lazy_capture: bool,
+    pub touch_controls: bool,
 }
 
 /// Represents a configuration deserialized from a file. This gets baked into a
@@ -80,6 +81,8 @@ struct ConfigFile {
     tab: Option<TabKind>,
     #[serde(default = "default_lazy_capture")]
     lazy_capture: bool,
+    #[serde(default = "default_touch_controls")]
+    touch_controls: bool,
 }
 
 #[derive(Deserialize, Default, Debug, Clone, PartialEq, clap::ValueEnum)]
@@ -234,6 +237,10 @@ fn default_lazy_capture() -> bool {
     false
 }
 
+fn default_touch_controls() -> bool {
+    false
+}
+
 impl ConfigFile {
     /// Override configuration with command-line arguments.
     pub fn apply_opt(&mut self, opt: &Opt) {
@@ -339,6 +346,7 @@ impl TryFrom<ConfigFile> for Config {
             names: config_file.names,
             tab: config_file.tab.unwrap_or_default(),
             lazy_capture: config_file.lazy_capture,
+            touch_controls: config_file.touch_controls,
         })
     }
 }
@@ -422,11 +430,13 @@ pub mod strict {
         themes: HashMap<String, Theme>,
         tab: Option<TabKind>,
         lazy_capture: bool,
+        touch_controls: bool,
     }
 
     impl From<ConfigFile> for super::ConfigFile {
         fn from(strict: ConfigFile) -> Self {
             super::ConfigFile {
+                touch_controls: false,
                 remote: strict.remote,
                 fps: strict.fps,
                 mouse: strict.mouse,

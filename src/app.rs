@@ -904,6 +904,7 @@ mod tests {
             names: Default::default(),
             tab: Default::default(),
             lazy_capture: Default::default(),
+            touch_controls: Default::default(),
         };
 
         let mut app = App::new(wirehose, event_rx, config);
@@ -996,6 +997,7 @@ mod tests {
             names: Default::default(),
             tab: Default::default(),
             lazy_capture: Default::default(),
+            touch_controls: Default::default(),
         };
         let mut app = App::new(&wirehose, event_rx, config);
 

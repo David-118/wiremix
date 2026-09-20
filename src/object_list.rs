@@ -355,6 +355,9 @@ impl ObjectListWidget<'_, '_> {
             .render(object_area, buf, mouse_areas);
         }
 
+        let dropdown_right_padding =
+            if self.config.touch_controls { 30 } else { 0 };
+
         // Show the target dropdown?
         if self.object_list.dropdown_state.selected().is_some() {
             // Get the area for the selected object
@@ -372,6 +375,7 @@ impl ObjectListWidget<'_, '_> {
                         self.object_list,
                         &context.list_area,
                         object_area,
+                        dropdown_right_padding,
                     ),
                     self.config,
                 )
