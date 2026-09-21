@@ -136,13 +136,13 @@ impl Default for Theme {
             node_title: Style::default(),
             node_target: Style::default(),
             volume: Style::default(),
-            volume_empty: Style::default().fg(Color::DarkGray),
+            volume_empty: Style::default().fg(Color::Gray),
             volume_filled: Style::default().fg(Color::LightBlue),
             volume_muted: Style::default().fg(Color::LightRed),
-            meter_inactive: Style::default().fg(Color::DarkGray),
+            meter_inactive: Style::default().fg(Color::Gray),
             meter_active: Style::default().fg(Color::LightGreen),
             meter_overload: Style::default().fg(Color::Red),
-            meter_center_inactive: Style::default().fg(Color::DarkGray),
+            meter_center_inactive: Style::default().fg(Color::Gray),
             meter_center_active: Style::default().fg(Color::LightGreen),
             config_device: Style::default(),
             config_profile: Style::default(),
@@ -152,10 +152,10 @@ impl Default for Theme {
             dropdown_selected: Style::default()
                 .fg(Color::LightCyan)
                 .add_modifier(Modifier::REVERSED),
-            dropdown_more: Style::default().fg(Color::DarkGray),
+            dropdown_more: Style::default().fg(Color::Gray),
             help_border: Style::default(),
             help_item: Style::default(),
-            help_more: Style::default().fg(Color::DarkGray),
+            help_more: Style::default().fg(Color::Gray),
         }
     }
 }
