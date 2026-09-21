@@ -10,6 +10,8 @@
 # PipeWire remote to connect to
 # remote = "pipewire-0"
 
+# Enable specail touch controls
+touch_controls = false
 # Limit rendering frames per second (unlimited if 0.0)
 fps = 60.0
 # Enable mouse support
@@ -248,15 +250,15 @@ node_target = {  }
 # The volume percentage label
 volume = {  }
 # Volume bar
-volume_empty = { fg = "DarkGray" }
+volume_empty = { fg = "Gray" }
 volume_filled = { fg = "LightBlue" }
 volume_muted = { fg = "LightRed" }
 # Peak meter. Inactive = unlit, active = lit, overload = greater than 0.0 dB
-meter_inactive = { fg = "DarkGray" }
+meter_inactive = { fg = "Gray" }
 meter_active = { fg = "LightGreen" }
 meter_overload = { fg = "Red" }
 # The "live" indicator in the center of the meter
-meter_center_inactive = { fg = "DarkGray" }
+meter_center_inactive = { fg = "Gray" }
 meter_center_active = { fg = "LightGreen" }
 # The name of a device in the Configuration tab
 config_device = {  }
@@ -272,14 +274,14 @@ dropdown_item = {  }
 dropdown_selected = { fg = "LightCyan", add_modifier = "REVERSED" }
 # The symbol at the top/bottom of a dropdown indicating that there are more
 # items
-dropdown_more = { fg = "DarkGray" }
+dropdown_more = { fg = "Gray" }
 # Border around help menu
 help_border = {  }
 # The name of an item in a the help menu
 help_item = {  }
 # The symbol at the top/bottom of the help menu indicating that there are more
 # items
-help_more = { fg = "DarkGray" }
+help_more = { fg = "Gray" }
 
 [themes.nocolor]
 default_device = {  }
