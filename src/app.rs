@@ -1,6 +1,7 @@
 //! Main rendering and event processing for the application.
 
 use std::collections::HashSet;
+use std::process::Command;
 use std::sync::{mpsc, Arc};
 use std::time::{Duration, Instant};
 
@@ -47,6 +48,7 @@ use crate::wirehose::{state::State, ObjectId};
 pub enum Action {
     Help,
     Exit,
+    Detach,
     MoveUp,
     MoveDown,
     ToggleMute,
@@ -90,6 +92,9 @@ impl std::fmt::Display for Action {
             Action::SetDefault => write!(f, "Set default"),
             Action::Help => write!(f, "Show/hide help"),
             Action::Exit => write!(f, "Exit wiremix"),
+            Action::Detach => {
+                write!(f, "Attempt to detach from a tmux session")
+            }
             Action::Nothing => write!(f, "Nothing"),
         }
     }
@@ -586,6 +591,12 @@ impl Handle for Action {
                     app.exit(None);
                     return Ok(true);
                 }
+                Action::Detach => {
+                    let _ = Command::new("tmux")
+                        .args(["detach", "-s", "wiremix"])
+                        .spawn();
+                    return Ok(true);
+                }
                 _ => {
                     return Ok(false);
                 }
@@ -651,6 +662,14 @@ impl Handle for Action {
             Action::Exit => {
                 app.exit(None);
             }
+            Action::Detach => {
+                let _ = Command::new("tmux")
+                    .args(["detach", "-s", "wiremix"])
+                    .spawn();
+
+                return Ok(true);
+            }
+
             Action::Nothing => {
                 // Did nothing
                 return Ok(false);
