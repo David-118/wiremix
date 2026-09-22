@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-03-05
+
 ### Added
 
 - User-configurable object filtering.
@@ -16,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tags no longer require a type prefix. If there is no prefix, it refers to the
   property on the object itself.
 - Name overrides now use PipeWire match rules.
+- TOML 1.1 support for wiremix.toml.
+
+### Removed
+
+- "git describe" information from --version string.
 
 ### Fixed
 
