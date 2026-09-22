@@ -237,17 +237,7 @@ impl<'a> App<'a> {
         rx: mpsc::Receiver<Event>,
         config: Config,
     ) -> Self {
-        let tabs = [
-            TabKind::Favorite,
-            TabKind::Playback,
-            TabKind::Recording,
-            TabKind::Output,
-            TabKind::Input,
-            TabKind::Configuration,
-        ]
-        .into_iter()
-        .map(Tab::from)
-        .collect();
+        let tabs = config.tabs.iter().copied().map(Tab::from).collect();
 
         // Update peaks with VU-meter-style ballistics
         let peak_processor = |new_peak, current_peak, samples, rate| {
@@ -267,7 +257,7 @@ impl<'a> App<'a> {
             rx,
             error_message: None,
             tabs,
-            current_tab_index: config.tab.index(),
+            current_tab_index: config.tab,
             mouse_areas: Vec::new(),
             is_ready: false,
             state,
@@ -896,7 +886,6 @@ mod tests {
     use std::cell::RefCell;
     use std::collections::VecDeque;
     use std::sync::Arc;
-    use strum::IntoEnumIterator;
 
     fn fixture<'a>(wirehose: &'a mock::WirehoseHandle<'a>) -> App<'a> {
         let (_, event_rx) = mpsc::channel();
@@ -913,7 +902,8 @@ mod tests {
             keybindings: Default::default(),
             help: Default::default(),
             names: Default::default(),
-            tab: Default::default(),
+            tab: 0,
+            tabs: vec![TabKind::Playback],
             lazy_capture: Default::default(),
             touch_controls: Default::default(),
             filters: Default::default(),
@@ -1014,7 +1004,15 @@ mod tests {
             keybindings,
             help: Default::default(),
             names: Default::default(),
-            tab: Default::default(),
+            tab: 0,
+            tabs: vec![
+                TabKind::Favorite,
+                TabKind::Playback,
+                TabKind::Recording,
+                TabKind::Output,
+                TabKind::Input,
+                TabKind::Configuration,
+            ],
             lazy_capture: Default::default(),
             touch_controls: Default::default(),
             filters: Default::default(),
@@ -1028,29 +1026,6 @@ mod tests {
         assert_eq!(app.current_tab_index, 4);
         let _ = x.handle(&mut app);
         assert_eq!(app.current_tab_index, 2);
-    }
-
-    /// Ensure that the tabs enum variants are in the same order as the app's
-    /// tab Vec. Making the initial tab configurable depends on this property
-    /// because it uses the position of the enum variants to derivce an index
-    /// into the tab Vec.
-    #[test]
-    fn tab_enum_order_matches_tab_vec() {
-        let wirehose = mock::WirehoseHandle::default();
-        let app = fixture(&wirehose);
-
-        assert_eq!(TabKind::iter().count(), app.tabs.len());
-
-        for (tab, Tab { title, .. }) in TabKind::iter().zip(app.tabs.iter()) {
-            match tab {
-                TabKind::Playback => assert_eq!(title, "Playback"),
-                TabKind::Recording => assert_eq!(title, "Recording"),
-                TabKind::Output => assert_eq!(title, "Output Devices"),
-                TabKind::Input => assert_eq!(title, "Input Devices"),
-                TabKind::Configuration => assert_eq!(title, "Configuration"),
-                TabKind::Favorite => assert_eq!(title, "Favorite"),
-            }
-        }
     }
 
     #[test]

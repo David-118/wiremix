@@ -33,6 +33,10 @@ theme = "default"
 
 # Initial tab
 tab = "favorite"
+
+# Which tabs are present and their order
+tabs = [ "favorite", "playback", "recording", "output", "input", "configuration" ]
+
 # Maximum percentage for volume sliders
 max_volume_percent = 150.0
 
@@ -426,6 +430,7 @@ help_more = "•••"
 # One of "Plain", "Rounded", "Double", "Thick", "QuadrantInside",
 # "QuadrantOutside"
 help_border = "Rounded"
+
 
 # Appendix A
 #
