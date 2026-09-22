@@ -24,7 +24,9 @@ wiremix's interface is more or less a clone of the wonderful
 [ncpamixer](https://github.com/fulhax/ncpamixer) which was itself inspired by
 pavucontrol, so users of either should find it familiar.
 
-<img src="https://raw.githubusercontent.com/David-118/wiremix/refs/heads/main/images/wiremix.GIF" width="612">
+Issues and pull requests are welcome!
+
+<img src="https://github.com/user-attachments/assets/26823e34-3a6f-4a3a-bdb2-cde7f3d4cbe5" width="612">
 
 ## Installation
 
@@ -280,8 +282,6 @@ for PipeWire nodes matching configurable criteria.
 
 See [wiremix.toml](./wiremix.toml) for more details.
 
-As I am lazy name overides system has been hijacked for the Favorites system.
-
 #### Examples
 
 The default naming scheme is:
@@ -312,33 +312,24 @@ I use these overrides with the default names:
 # This device's device.name is truncated to "USB-C to 3.5mm Headphone Jack
 # A". This override makes wiremix use device.description instead, which for
 # this device is "USB-C to 3.5mm Headphone Jack Adapter".
-# The device will appear on the favorite tab above all lower prioriry devices.
 [[names.overrides]]
 types = [ "endpoint", "device" ]
 matches = [ { "device:device.name" = "alsa_card.usb-Apple__Inc._USB-C_to_3.5mm_Headphone_Jack_Adapter_DWH841302FEJKLTA3-00" } ]
 templates = [ "{device:device.description}" ]
-favorite = true
-favorite_priority = 10
 
 # The Spotify client's node.name is "spotify", and it also uses "Spotify" for
 # media.name. This override makes wiremix use just the node.name, so it shows
 # as "spotify" instead of "spotify: Spotify".
-# The device will not appear in the favorite list. Prioriry must be set but will be ignored.
 [[names.overrides]]
 types = [ "stream" ]
 matches = [ { "node.name" = "spotify" } ]
 templates = [ "{node:node.name}" ]
-favorite = false
-favorite_priority = 0
 
 # mpv is also a bit redundant with the default naming scheme - it suffixes
 # media.name with "- mpv". This override makes it show as "foo - mpv" instead
 # of "mpv: foo - mpv".
-# mpv will appear on the favorites screen under the dongle (when open).
 [[names.overrides]]
 types = [ "stream" ]
 matches = [ { "node.name" = "mpv" } ]
 templates = [ "{node:media.name}" ]
-favorite = false
-favorite_priority = 0
 ```
