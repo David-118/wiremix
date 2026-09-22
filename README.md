@@ -24,9 +24,7 @@ wiremix's interface is more or less a clone of the wonderful
 [ncpamixer](https://github.com/fulhax/ncpamixer) which was itself inspired by
 pavucontrol, so users of either should find it familiar.
 
-Issues and pull requests are welcome!
-
-<img src="https://github.com/user-attachments/assets/26823e34-3a6f-4a3a-bdb2-cde7f3d4cbe5" width="612">
+<img src="./images/wiremix.GIF" width="612">
 
 ## Installation
 
@@ -263,12 +261,29 @@ PipeWire properties.
 
 See [wiremix.toml](./wiremix.toml) for more details.
 
+
 #### Examples
 
 ```toml
 [[filters]]
 # Hide virtual endpoints
 matches = [ { "node.virtual" = "true", "media.class" = "Audio/Sink" } ]
+```
+
+### Favorites
+
+You can add specfic objects to favorites tab using the same sytax as the filters.
+
+See [wiremix.toml](./wiremix.toml) for more details.
+
+
+#### Examples
+
+```toml
+[[favorite_filters]]
+# Show spotify on the favorites tab
+matches = [ { "node.name" = "spotify" } ]
+
 ```
 
 ### Names
