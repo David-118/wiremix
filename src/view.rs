@@ -229,7 +229,8 @@ impl Node {
 
         let media_class = node.props.media_class()?.clone();
         let title = names.resolve(state, node)?;
-        let (favorite, favorite_priority) = names.favorite(state, node);
+        // TODO - Temporaly set all nodes to not favorited
+        let (favorite, favorite_priority) = (false, 0);
 
         // Nodes can represent either streams or devices.
         let (volumes, mute, device_info) =

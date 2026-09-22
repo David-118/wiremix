@@ -51,14 +51,6 @@ impl Names {
             })
             .or(resolver.fallback().cloned())
     }
-
-    pub fn favorite<T: PropertyResolver + NameResolver>(
-        &self,
-        state: &state::State,
-        resolver: &T,
-    ) -> (bool, i8) {
-        resolver.favorite(state, self)
-    }
 }
 
 impl Default for Names {
@@ -101,36 +93,6 @@ pub trait NameResolver: PropertyResolver {
                     == Some(&name_override.value))
             .then_some(&name_override.templates)
         })
-    }
-
-    fn favourites_override<'a>(
-        &self,
-        state: &state::State,
-        overrides: &'a [config::NameOverride],
-        override_type: config::OverrideType,
-    ) -> Option<(bool, i8)> {
-        overrides.iter().find_map(|name_override| {
-            (name_override.types.contains(&override_type)
-                && self.resolve_tag(state, &name_override.property)
-                    == Some(&name_override.value))
-            .then_some((
-                name_override.favorite,
-                name_override.favorite_priority,
-            ))
-        })
-    }
-
-    fn favorite(
-        &self,
-        state: &state::State,
-        names: &config::Names,
-    ) -> (bool, i8) {
-        self.favourites_override(
-            state,
-            &names.overrides,
-            config::OverrideType::Device,
-        )
-        .unwrap_or((false, 0))
     }
 }
 
@@ -515,8 +477,6 @@ mod tests {
                     "{node:node.description}".parse().unwrap(),
                     "{node:node.nick}".parse().unwrap(),
                 ],
-                favorite: false,
-                favorite_priority: 0,
             }],
             ..Default::default()
         };
@@ -536,8 +496,6 @@ mod tests {
                 property: PropertyKey::Node(String::from("node.name")),
                 value: String::from("Node name"),
                 templates: vec!["{node:node.nick}".parse().unwrap()],
-                favorite: false,
-                favorite_priority: 0,
             }],
             ..Default::default()
         };
@@ -557,8 +515,6 @@ mod tests {
                 property: PropertyKey::Node(String::from("node.description")),
                 value: String::from("Node name"),
                 templates: vec!["{node:node.nick}".parse().unwrap()],
-                favorite: false,
-                favorite_priority: 0,
             }],
             ..Default::default()
         };
@@ -578,8 +534,6 @@ mod tests {
                 property: PropertyKey::Node(String::from("node.name")),
                 value: String::from("Node name"),
                 templates: vec![],
-                favorite: false,
-                favorite_priority: 0,
             }],
             ..Default::default()
         };
@@ -587,82 +541,5 @@ mod tests {
         let node = fixture.state.nodes.get(&fixture.node_id).unwrap();
         let result = names.resolve(&fixture.state, node);
         assert_eq!(result, Some(String::from("Node name")))
-    }
-
-    #[test]
-    fn test_favourite_no_overide() {
-        let fixture = Fixture::new();
-
-        let names = Names {
-            ..Default::default()
-        };
-
-        let node = fixture.state.nodes.get(&fixture.node_id).unwrap();
-        let result = names.favorite(&fixture.state, node);
-
-        assert_eq!(result, (false, 0))
-    }
-
-    #[test]
-    fn test_favourite_overide_not_fav() {
-        let fixture = Fixture::new();
-
-        let names = Names {
-            overrides: vec![NameOverride {
-                types: vec![OverrideType::Device, OverrideType::Stream],
-                property: PropertyKey::Node(String::from("node.name")),
-                value: String::from("Node name"),
-                templates: vec![],
-                favorite: false,
-                favorite_priority: 0,
-            }],
-            ..Default::default()
-        };
-
-        let node = fixture.state.nodes.get(&fixture.node_id).unwrap();
-        let result = names.favorite(&fixture.state, node);
-        assert_eq!(result, (false, 0))
-    }
-
-    #[test]
-    fn test_favourite_overide_others() {
-        let fixture = Fixture::new();
-
-        let names = Names {
-            overrides: vec![NameOverride {
-                types: vec![OverrideType::Device, OverrideType::Stream],
-                property: PropertyKey::Node(String::from("node.name")),
-                value: String::from("Not Node name"),
-                templates: vec![],
-                favorite: true,
-                favorite_priority: 100,
-            }],
-            ..Default::default()
-        };
-
-        let node = fixture.state.nodes.get(&fixture.node_id).unwrap();
-        let result = names.favorite(&fixture.state, node);
-        assert_eq!(result, (false, 0))
-    }
-
-    #[test]
-    fn test_favourited_node() {
-        let fixture = Fixture::new();
-
-        let names = Names {
-            overrides: vec![NameOverride {
-                types: vec![OverrideType::Device, OverrideType::Stream],
-                property: PropertyKey::Node(String::from("node.name")),
-                value: String::from("Node name"),
-                templates: vec![],
-                favorite: true,
-                favorite_priority: 100,
-            }],
-            ..Default::default()
-        };
-
-        let node = fixture.state.nodes.get(&fixture.node_id).unwrap();
-        let result = names.favorite(&fixture.state, node);
-        assert_eq!(result, (true, 100))
     }
 }
