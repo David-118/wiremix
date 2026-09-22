@@ -9,7 +9,7 @@ use crate::config::{Config, Peaks};
 use crate::wirehose::state::CaptureEligibility;
 use crate::wirehose::{
     media_class, CommandSender, Event as PipewireEvent, PeakProcessor,
-    StateEvent,
+    PipewireError, StateEvent,
 };
 
 use anyhow::{anyhow, Result};
@@ -766,21 +766,17 @@ impl Handle for StateEvent {
     }
 }
 
-impl Handle for String {
+impl Handle for PipewireError {
     fn handle(self, app: &mut App) -> Result<bool> {
-        // Handle errors
-        match self {
-            // These happen when objects are removed while wirehose is still in
-            // the process of setting up listeners
-            error if error.starts_with("no global ") => {}
-            error if error.starts_with("unknown resource ") => {}
-            // I see this one when disconnecting a Bluetooth sink
-            error if error == "Received error event" => {}
-            // This occurs sometimes when Bluetooth devices disconnect
-            error if error == "Buffer allocation failed" => {}
-            _ => app.exit(Some(self)),
+        // These errors don't seem to be fatal, so ignore them.
+        // In debug builds, exit and log the error. In the event that we caused
+        // the error, it will be helpful to know.
+        if cfg!(debug_assertions) {
+            app.exit(Some(self));
+            return Ok(true);
         }
-        Ok(false) // This makes sense for now
+
+        Ok(false)
     }
 }
 
