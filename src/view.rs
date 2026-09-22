@@ -109,9 +109,6 @@ pub struct Node {
     pub is_default_source: bool,
 
     pub client_id: Option<ObjectId>,
-
-    pub favorite: bool,
-    pub favorite_priority: i8,
 }
 
 #[derive(Debug)]
@@ -229,8 +226,6 @@ impl Node {
 
         let media_class = node.props.media_class()?.clone();
         let title = names.resolve(state, node)?;
-        // TODO - Temporaly set all nodes to not favorited
-        let (favorite, favorite_priority) = (false, 0);
 
         // Nodes can represent either streams or devices.
         let (volumes, mute, device_info) =
@@ -339,8 +334,6 @@ impl Node {
             object_serial: *node.props.object_serial()?,
             name: node.props.node_name()?.clone(),
             title,
-            favorite,
-            favorite_priority,
             media_class,
             routes,
             target,
@@ -482,6 +475,7 @@ impl<'a> View<'a> {
         state: &state::State,
         names: &config::Names,
         filters: &[config::MatchCondition],
+        favorite_filters: &[config::MatchCondition],
     ) -> View<'a> {
         let default_sink_name = default_for(state, "default.audio.sink");
         let default_source_name = default_for(state, "default.audio.source");
@@ -580,7 +574,7 @@ impl<'a> View<'a> {
             .collect();
 
         let mut nodes_all = Vec::new();
-        let mut nodes_favorite_unsorted = Vec::new();
+        let mut nodes_favorite = Vec::new();
         let mut nodes_playback = Vec::new();
         let mut nodes_recording = Vec::new();
         let mut nodes_output = Vec::new();
@@ -593,8 +587,12 @@ impl<'a> View<'a> {
             })
         {
             nodes_all.push(*id);
-            if node.favorite {
-                nodes_favorite_unsorted.push((node.favorite_priority, *id));
+            if is_filtered(
+                favorite_filters,
+                state,
+                state.nodes.get(&node.object_id),
+            ) {
+                nodes_favorite.push(*id);
             }
             if media_class::is_sink_input(&node.media_class) {
                 nodes_playback.push(*id);
@@ -610,12 +608,7 @@ impl<'a> View<'a> {
             }
         }
 
-        let nodes_favorite = nodes_favorite_unsorted
-            .iter()
-            .sorted_by_key(|(priority, _)| -priority)
-            .map(|(_, id)| *id)
-            .collect_vec();
-
+        let nodes_favorite = nodes_favorite;
         let nodes_all = nodes_all;
         let nodes_playback = nodes_playback;
         let nodes_recording = nodes_recording;

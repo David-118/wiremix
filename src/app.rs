@@ -323,6 +323,7 @@ impl<'a> App<'a> {
                     &self.state,
                     &self.config.names,
                     &self.config.filters,
+                    &self.config.favorite_filters,
                 );
             }
             self.state_dirty = false;
@@ -975,8 +976,13 @@ mod tests {
         for event in events {
             event.handle(&mut app).unwrap();
         }
-        app.view =
-            View::from(wirehose, &app.state, &app.config.names, &Vec::new());
+        app.view = View::from(
+            wirehose,
+            &app.state,
+            &app.config.names,
+            &Vec::new(),
+            &Vec::new(),
+        );
 
         // Select the node
         Action::SelectObject(object_id).handle(&mut app).unwrap();
